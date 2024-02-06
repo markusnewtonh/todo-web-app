@@ -1,6 +1,10 @@
 package org.markusnh.todo.controller;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.markusnh.todo.model.Task;
+import org.markusnh.todo.repository.TaskRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,10 +12,13 @@ import java.util.List;
 
 @RestController
   public class TodoController {
-//  private  db;
-  private List<Task> tasks; // alt+ins for gen constructor
 
+  private final TaskRepository repository;
+//  private List<Task> tasks; // alt+ins for gen constructor
 
+  public TodoController(TaskRepository repository) {
+    this.repository = repository;
+  }
 
   /**
    * Returns a list of all the stored tasks.
@@ -28,6 +35,7 @@ import java.util.List;
    * @return updated list of tasks
    */
   public List<Task> addTask(String description) {
+    // validate description? annotation?
     // create new task
     // add to db
     // return new list
