@@ -14,4 +14,20 @@ public class Task {
     this.description = description;
     this.completed = completed;
   }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public boolean isCompleted() {
+    return completed;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setCompleted(boolean completed) {
+    this.completed = completed;
+  }
 }
