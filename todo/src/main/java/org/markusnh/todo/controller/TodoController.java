@@ -1,9 +1,8 @@
 package org.markusnh.todo.controller;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import org.markusnh.todo.model.Task;
+import org.markusnh.todo.model.TaskRequest;
 import org.markusnh.todo.repository.ResourceNotFoundException;
 import org.markusnh.todo.repository.TaskRepository;
 import org.springframework.web.bind.annotation.*;
@@ -29,22 +28,13 @@ public class TodoController {
   /**
    * Adds a task to the task database and returns the updated list of tasks.
    *
-   * @param description description of the new task
+   * @param newTask new task request containing the task description
    * @return updated list of tasks
    */
-  @PostMapping("/new-task")
-  public List<Task> addTask(@RequestParam @NotBlank String description) {
-    // validate description? annotation?
+  @PostMapping("tasks/add-task")
+  public List<Task> addTask(@RequestBody TaskRequest newTask) {
     int id = (int) repository.count() + 1;
-    repository.insert(new Task(id, description, false));
-    return repository.findAll();
-  }
-
-  @PostMapping("/test-task")
-  public List<Task> addTask() {
-    // validate description? annotation?
-    int id = (int) repository.count() + 1;
-    repository.insert(new Task(id, "test", false));
+    repository.insert(new Task(id, newTask.getDescription(), false));
     return repository.findAll();
   }
 
@@ -55,8 +45,8 @@ public class TodoController {
    * @return updated list of tasks
    */
   @DeleteMapping("/tasks/{id}")
-  public List<Task> removeTask(@PathVariable @NotEmpty String id) {
-    if (!repository.existsById(id)) {
+  public List<Task> removeTask(@PathVariable int id) {
+    if (repository.findById(id) == null) {
       throw new ResourceNotFoundException("Task with id: " + id + "does not exist.");
     }
     repository.deleteById(id);
@@ -67,19 +57,17 @@ public class TodoController {
    * Updates a given task's description.
    *
    * @param id task id of the task that should be updated
-   * @param newDescription new description for the given task
+   * @param taskRequest task request with the new description for the given task
    * @return updated list of tasks
    */
-  @PutMapping("task/{id}")
+  @PatchMapping("tasks/{id}")
   public List<Task> updateTaskDescription(
-      @PathVariable @NotEmpty String id,
-      @RequestParam @NotBlank String newDescription,
-      @RequestParam @NotEmpty boolean completed) {
-    if (!repository.existsById(id)) {
+      @PathVariable int id, @RequestBody TaskRequest taskRequest) {
+    if (repository.findById(id) == null) {
       throw new ResourceNotFoundException("Task with id: " + id + "does not exist.");
     }
-    Task task = repository.findById(id).get();
-    task.setDescription(newDescription);
+    Task task = repository.findById(id);
+    task.setDescription(taskRequest.getDescription());
     repository.save(task);
     return repository.findAll();
   }
@@ -90,30 +78,13 @@ public class TodoController {
    * @param id task id of the task that should be marked completed
    * @return updated list of tasks
    */
-  @PutMapping("/task/completed/{id}")
-  public List<Task> markCompleted(@PathVariable @NotBlank String id) {
-    if (!repository.existsById(id)) {
+  @PatchMapping("/tasks/completed/{id}")
+  public List<Task> updateCompleted(@PathVariable int id, @RequestBody TaskRequest taskRequest) {
+    if (repository.findById(id) == null) {
       throw new ResourceNotFoundException("Task with id: " + id + "does not exist.");
     }
-    Task task = repository.findById(id).get();
-    task.setCompleted(true);
-    repository.save(task);
-    return repository.findAll();
-  }
-
-  /**
-   * Unmarks a given task as completed.
-   *
-   * @param id task id of the task that should be unmarked completed
-   * @return updated list of tasks
-   */
-  @PutMapping("/task/uncompleted/{id}")
-  public List<Task> unmarkCompleted(@PathVariable @NotBlank String id) {
-    if (!repository.existsById(id)) {
-      throw new ResourceNotFoundException("Task with id: " + id + "does not exist.");
-    }
-    Task task = repository.findById(id).get();
-    task.setCompleted(false);
+    Task task = repository.findById(id);
+    task.setCompleted(taskRequest.isCompletedStatus());
     repository.save(task);
     return repository.findAll();
   }

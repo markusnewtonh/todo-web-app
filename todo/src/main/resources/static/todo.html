@@ -1,3 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List</title>
+    <style>
+        .task-checkbox {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
 <body>
-Ready to actually do something??
+
+<form id="newTaskForm">
+    <label for="taskDescription">Add New Task:</label>
+    <input type="text" id="taskDescription" required>
+    <button type="submit">Add Task</button>
+</form>
+
+<div id="taskList"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const taskListDiv = document.getElementById("taskList");
+        const newTaskForm = document.getElementById("newTaskForm");
+
+        // Replace "your-api-endpoint" with the actual API endpoint
+        const tasksApiEndpoint = "http://localhost:8080/tasks";
+
+        // Fetch tasks and display on page load
+        fetchTasks();
+
+        // Handle form submission to add a new task
+        newTaskForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const taskDescriptionInput = document.getElementById("taskDescription");
+            const newTaskDescription = taskDescriptionInput.value;
+
+            // Make a POST request to add a new task
+            fetch(tasksApiEndpoint + "/add-task", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    description: newTaskDescription,
+                    completedStatus: false
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Clear the input field
+                    taskDescriptionInput.value = "";
+
+                    // Display the updated list of tasks
+                    fetchTasks();
+                })
+                .catch(error => console.error("Error adding new task:", error));
+        });
+
+        function fetchTasks() {
+            // Fetch tasks and display on page load
+            fetch(tasksApiEndpoint)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear the taskListDiv before adding new tasks
+                    taskListDiv.innerHTML = "";
+
+                    // Assuming the API response is an array of task items
+                    data.forEach(task => {
+                        createTaskCheckbox(task);
+                    });
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+
+        function createTaskCheckbox(task) {
+            // Create a new checkbox div
+            const checkboxDiv = document.createElement("div");
+            checkboxDiv.classList.add("task-checkbox");
+
+            // Create a checkbox input element
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+
+            // Set the checkbox state based on the completion data from the API
+            checkbox.checked = task.completed;
+
+            // Create a span for the task description
+            const descriptionSpan = document.createElement("span");
+            descriptionSpan.textContent = task.description;
+            descriptionSpan.contentEditable = true;
+
+            // Add an event listener for the blur event (when the element loses focus)
+            descriptionSpan.addEventListener("blur", function () {
+                // Call the updateTaskDescription function when the description is edited
+                updateTaskDescription(task.id, descriptionSpan.textContent);
+            });
+
+            // Create a button for removing the task
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Remove";
+            removeButton.addEventListener("click", function () {
+                // Call a function to remove the task both in HTML and send a DELETE request
+                removeTask(task.id);
+            });
+
+            // Add an event listener for the checkbox change event
+            checkbox.addEventListener("change", function () {
+                // Call the updateCompletionStatus function when the checkbox changes
+                updateCompletionStatus(task.id, checkbox.checked);
+            });
+
+            // Append checkbox, description, and buttons to the checkbox div
+            checkboxDiv.appendChild(checkbox);
+            checkboxDiv.appendChild(descriptionSpan);
+            checkboxDiv.appendChild(removeButton);
+
+            // Append the checkbox div to the taskList div
+            taskListDiv.appendChild(checkboxDiv);
+        }
+
+        function removeTask(taskId) {
+            // Make a DELETE request to remove the task
+            fetch(`${tasksApiEndpoint}/${taskId}`, {
+                method: "DELETE",
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the updated list of tasks
+                    fetchTasks();
+                })
+                .catch(error => console.error(`Error removing task with ID ${taskId}:`, error));
+        }
+
+        function updateCompletionStatus(taskId, completed) {
+            // Make a PATCH request to update the completion status
+            fetch(`${tasksApiEndpoint}/completed/${taskId}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    description: "ignored",
+                    completedStatus: completed
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the updated list of tasks
+                    fetchTasks();
+                })
+                .catch(error => console.error(`Error updating completion status for task with ID ${taskId}:`, error));
+        }
+
+        function updateTaskDescription(taskId, newDescription) {
+            // Make a PATCH request to update the task description
+            fetch(`${tasksApiEndpoint}/${taskId}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    description: newDescription,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the updated list of tasks
+                    fetchTasks();
+                })
+                .catch(error => console.error(`Error updating description for task with ID ${taskId}:`, error));
+        }
+    });
+</script>
+
 </body>
+</html>
