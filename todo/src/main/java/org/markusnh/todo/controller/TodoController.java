@@ -3,16 +3,15 @@ package org.markusnh.todo.controller;
 import java.util.List;
 import org.markusnh.todo.model.Task;
 import org.markusnh.todo.model.TaskRequest;
-import org.markusnh.todo.repository.ResourceNotFoundException;
-import org.markusnh.todo.repository.TaskRepository;
+import org.markusnh.todo.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class TodoController {
-  private final TaskRepository repository;
+  private final TaskService taskService;
 
-  public TodoController(TaskRepository repository) {
-    this.repository = repository;
+  public TodoController(TaskService taskService) {
+    this.taskService = taskService;
   }
 
   /**
@@ -22,20 +21,18 @@ public class TodoController {
    */
   @GetMapping("/tasks")
   public List<Task> getTasks() {
-    return this.repository.findAll();
+    return taskService.getTasks();
   }
 
   /**
    * Adds a task to the task database and returns the updated list of tasks.
    *
-   * @param newTask new task request containing the task description
+   * @param taskRequest task request containing a task description
    * @return updated list of tasks
    */
   @PostMapping("tasks/add-task")
-  public List<Task> addTask(@RequestBody TaskRequest newTask) {
-    int id = (int) repository.count() + 1;
-    repository.insert(new Task(id, newTask.getDescription(), false));
-    return repository.findAll();
+  public List<Task> addTask(@RequestBody TaskRequest taskRequest) {
+    return taskService.createTask(taskRequest.getDescription());
   }
 
   /**
@@ -46,11 +43,7 @@ public class TodoController {
    */
   @DeleteMapping("/tasks/{id}")
   public List<Task> removeTask(@PathVariable int id) {
-    if (repository.findById(id) == null) {
-      throw new ResourceNotFoundException("Task with id: " + id + "does not exist.");
-    }
-    repository.deleteById(id);
-    return repository.findAll();
+    return taskService.removeTask(id);
   }
 
   /**
@@ -63,29 +56,19 @@ public class TodoController {
   @PatchMapping("tasks/{id}")
   public List<Task> updateTaskDescription(
       @PathVariable int id, @RequestBody TaskRequest taskRequest) {
-    if (repository.findById(id) == null) {
-      throw new ResourceNotFoundException("Task with id: " + id + "does not exist.");
-    }
-    Task task = repository.findById(id);
-    task.setDescription(taskRequest.getDescription());
-    repository.save(task);
-    return repository.findAll();
+    return taskService.updateTaskDescription(id, taskRequest.getDescription());
   }
 
   /**
-   * Marks a given task as completed.
+   * Toggles the completion status of a given task.
    *
    * @param id task id of the task that should be marked completed
+   * @param taskRequest task request with the new completion status
    * @return updated list of tasks
    */
   @PatchMapping("/tasks/completed/{id}")
-  public List<Task> updateCompleted(@PathVariable int id, @RequestBody TaskRequest taskRequest) {
-    if (repository.findById(id) == null) {
-      throw new ResourceNotFoundException("Task with id: " + id + "does not exist.");
-    }
-    Task task = repository.findById(id);
-    task.setCompleted(taskRequest.isCompletedStatus());
-    repository.save(task);
-    return repository.findAll();
+  public List<Task> toggleCompletedStatus(
+      @PathVariable int id, @RequestBody TaskRequest taskRequest) {
+    return taskService.toggleCompletedStatus(id, taskRequest.isCompletedStatus());
   }
 }
