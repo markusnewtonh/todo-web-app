@@ -1,0 +1,73 @@
+body {
+    background-color: #323844;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#newTaskForm {
+    display: flex;
+    text-align: left;
+    align-items: center;
+}
+
+#taskDescription {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 200px;
+    font-family: "Roboto Condensed", sans-serif;
+    color: #2c2c2c;
+}
+
+#addTaskButton {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    text-align: center;
+    text-decoration: none;
+}
+
+#addTaskButton:hover {
+    color: #3d7e3b;
+}
+
+
+#addTaskButton:active {
+    transform: scale(95%);
+    color: #54ad51;
+}
+
+#taskList {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-left: 40px;
+    font-family: "Roboto Condensed", sans-serif;
+    font-size: 16px;
+}
+
+.removeButton {
+    background-color: transparent;
+    color: #ffbabf;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.removeButton:hover {
+    color: #753b3c;
+}
+
+.task-checkbox {
+    display: flex;
+    text-align: left;
+    align-items: center;
+    color: whitesmoke;
+}
