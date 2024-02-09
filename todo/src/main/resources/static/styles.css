@@ -7,6 +7,10 @@ body {
     margin: 0;
 }
 
+*:focus {
+    outline-color: #d1d1d1;
+}
+
 #newTaskForm {
     display: flex;
     text-align: left;
@@ -30,6 +34,7 @@ body {
     font-size: 18px;
     text-align: center;
     text-decoration: none;
+    margin-top: 3px;
 }
 
 #addTaskButton:hover {
@@ -42,10 +47,34 @@ body {
     color: #54ad51;
 }
 
+.task-checkbox {
+    display: flex;
+    text-align: left;
+    align-items: center;
+    color: whitesmoke;
+}
+
+.custom-checkbox {
+    opacity: 0; /* Hide the default checkbox */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.material-checkbox {
+    cursor: pointer;
+    user-select: none;
+    padding-right: 8px;
+}
+
+.material-checkbox:hover {
+    color: #c2c2c2;
+}
+
 #taskList {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 4px;
     margin-left: 40px;
     font-family: "Roboto Condensed", sans-serif;
     font-size: 16px;
@@ -58,16 +87,11 @@ body {
     padding: 5px 8px;
     border-radius: 50%;
     cursor: pointer;
+    margin-top: 5px;
     margin-left: 5px;
 }
 
 .removeButton:hover {
-    color: #753b3c;
+    color: #cc7d80;
 }
 
-.task-checkbox {
-    display: flex;
-    text-align: left;
-    align-items: center;
-    color: whitesmoke;
-}

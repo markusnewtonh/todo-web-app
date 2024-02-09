@@ -59,9 +59,20 @@ document.addEventListener("DOMContentLoaded", function () {
         // Create a checkbox input element
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
+        checkbox.classList.add("custom-checkbox");
+        checkbox.style.opacity = 0;
 
         // Set the checkbox state based on the completion data from the API
         checkbox.checked = task.completed;
+
+        // Custom image for checkbox
+        // Create a span for the checked state
+        const checkedSpan = document.createElement("span");
+        checkedSpan.classList.add("material-symbols-outlined");
+        checkedSpan.classList.add("material-checkbox");
+
+        // toggle checkbox image if the task is completed
+        toggleCheckboxGraphic(checkedSpan, checkbox);
 
         // Create a span for the task description
         const descriptionSpan = document.createElement("span");
@@ -89,14 +100,15 @@ document.addEventListener("DOMContentLoaded", function () {
             removeTask(task.id);
         });
 
-        // Add an event listener for the checkbox change event
-        checkbox.addEventListener("change", function () {
-            // Call the updateCompletionStatus function when the checkbox changes
+        checkedSpan.addEventListener("click", function () {
+            checkbox.checked = !checkbox.checked;
             updateCompletionStatus(task.id, checkbox.checked);
+            toggleCheckboxGraphic(checkedSpan, checkbox)
         });
 
         // Append checkbox, description, and buttons to the checkbox div
         checkboxDiv.appendChild(checkbox);
+        checkboxDiv.appendChild(checkedSpan);
         checkboxDiv.appendChild(descriptionSpan);
         checkboxDiv.appendChild(removeButton);
 
@@ -154,5 +166,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 fetchTasks();
             })
             .catch(error => console.error(`Error updating description for task with ID ${taskId}:`, error));
+    }
+
+    function toggleCheckboxGraphic(checkboxSpan, checkboxStatus) {
+        if (checkboxStatus.checked) {
+            checkboxSpan.textContent = "check_box";
+        } else {
+            checkboxSpan.textContent = "check_box_outline_blank";
+        }
     }
 });
