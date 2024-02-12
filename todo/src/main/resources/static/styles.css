@@ -95,3 +95,51 @@ body {
     color: #cc7d80;
 }
 
+/* project visuals */
+
+#projectVisual {
+    text-align: center;
+    position: fixed;
+    /*left: 37.5%;*/
+    bottom: 8%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.view {
+    display: flex;
+    width: 126px;
+    justify-content: center;
+    padding-bottom: 4%;
+}
+
+.backend.and.db {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin: 0;
+}
+
+.backend {
+    position: relative;
+    margin-right: 15%;
+}
+
+.backend.pc {
+    width: 188px;
+}
+
+.backend.gear {
+    position: absolute;
+    left: 75%;
+    bottom: 15%;
+}
+
+.db {
+    width: 98px;
+    margin-right: 3%;
+    margin-top: 10px;
+}
+
