@@ -78,11 +78,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const descriptionSpan = document.createElement("span");
         descriptionSpan.textContent = task.description;
         descriptionSpan.contentEditable = true;
+        descriptionSpan.required = true;
 
         // Add an event listener for the blur event (when the element loses focus)
         descriptionSpan.addEventListener("blur", function () {
             // Call the updateTaskDescription function when the description is edited
-            updateTaskDescription(task.id, descriptionSpan.textContent);
+            if (descriptionSpan.textContent === "") {
+                removeTask(task.id);
+            } else {
+                updateTaskDescription(task.id, descriptionSpan.textContent);
+            }
         });
 
         // Create a button for removing the task
