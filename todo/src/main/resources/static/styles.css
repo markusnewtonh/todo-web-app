@@ -118,7 +118,8 @@ body {
     display: flex;
     width: 126px;
     justify-content: center;
-    padding-bottom: 4%;
+    margin-bottom: 80px;
+    margin-left: 93px;
 }
 
 .backend.and.db {
@@ -130,7 +131,7 @@ body {
 
 .backend {
     position: relative;
-    margin-right: 15%;
+    margin-right: 150px;
 }
 
 .backend.pc {
@@ -139,13 +140,43 @@ body {
 
 .backend.gear {
     position: absolute;
-    left: 75%;
-    bottom: 15%;
+    left: 32%;
+    bottom: 13%;
 }
 
 .db {
     width: 98px;
-    margin-right: 3%;
     margin-top: 10px;
+}
+
+/* arrow animations */
+
+#shortGreenArrow {
+    position: absolute;
+    /*filter: invert(29%) sepia(17%) saturate(5980%) hue-rotate(240deg) brightness(86%) contrast(76%);*/
+    width: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0px;
+    right: 141px;
+    top: 135px;
+    text-align: center;
+    transform: rotate(313deg);
+}
+
+
+#longRedArrow {
+    position: absolute;
+    /* red filter */
+    filter: invert(29%) sepia(17%) saturate(5980%) hue-rotate(240deg) brightness(86%) contrast(76%);
+    width: 245px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 73px;
+    right: 0;
+    top: 259px;
+    text-align: center;
+    /* point right -> */
+    transform: rotate(180deg);
 }
 
