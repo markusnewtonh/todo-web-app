@@ -145,22 +145,23 @@ body {
 }
 
 .db {
+    display: flex;
     width: 98px;
     margin-top: 10px;
 }
 
 .task.db.container {
-    position: absolute;
+    display: block;
+    position: relative;
     width: 50px;
     margin-left: auto;
-    right: 60px;
-    top: 15px;
-    text-align: right;
+    margin-right: auto;
+    text-align: center;
 }
 
 .task.db.container img {
-    display: block;
     padding-top: 3px;
+    height: 8px;
 }
 
 /* arrow animations */
@@ -324,3 +325,57 @@ body {
     text-align: center;
 }
 
+/* animation texts */
+
+.animation.text {
+    width: 100%;
+    position: absolute;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Roboto Condensed", sans-serif;
+    font-size: 16px;
+    color: #d1d1d1;
+}
+
+.api.req.text {
+    position: relative;
+    /*font-family: "Roboto Condensed", sans-serif;*/
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+    right: 86px;
+    top: 137px;
+    text-align: center;
+    transform: rotate(313deg);
+}
+
+.api.res.text {
+    position: relative;
+    /*font-family: "Roboto Condensed", sans-serif;*/
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+    right: 43px;
+    top: 161px;
+    text-align: center;
+    transform: rotate(313deg);
+}
+
+.db.req.text {
+    position: relative;
+    /*font-family: "Roboto Condensed", sans-serif;*/
+    margin-left: auto;
+    margin-right: auto;
+    left: 26px;
+    top: 244px;
+    text-align: center;
+}
+
+.db.res.text {
+    position: relative;
+    /*font-family: "Roboto Condensed", sans-serif;*/
+    margin-left: auto;
+    margin-right: auto;
+    left: 93px;
+    top: 158px;
+    text-align: center;
+}

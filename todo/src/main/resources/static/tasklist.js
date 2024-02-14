@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Fetch tasks and display on page load
-    fetchTasks();
+    fetchTasksInit();
 
     // Handle form submission to add a new task
     newTaskForm.addEventListener("submit", function (event) {
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const newTaskDescription = taskDescriptionInput.value;
 
         // Make a POST request to add a new task
-        fetch(tasksApiEndpoint + "/add-task", {
+        fetch(tasksApiEndpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -44,15 +44,30 @@ document.addEventListener("DOMContentLoaded", function () {
         animateRequest(RequestMethod.POST);
     });
 
-    function fetchTasks() {
-        // Fetch tasks and display on page load
+    function fetchTasksInit() {
+        // Fetch tasks and display
         fetch(tasksApiEndpoint)
             .then(response => response.json())
             .then(data => {
                 // Clear the taskListDiv before adding new tasks
                 taskListDiv.innerHTML = "";
 
-                // Assuming the API response is an array of task items
+                data.forEach(task => {
+                    createTaskCheckbox(task);
+                    addDbTaskImage();
+                });
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    }
+
+    function fetchTasks() {
+        // Fetch tasks and display
+        fetch(tasksApiEndpoint)
+            .then(response => response.json())
+            .then(data => {
+                // Clear the taskListDiv before adding new tasks
+                taskListDiv.innerHTML = "";
+
                 data.forEach(task => {
                     createTaskCheckbox(task);
                 });
@@ -219,56 +234,101 @@ document.addEventListener("DOMContentLoaded", function () {
         // delete previous arrows
         deletePreviousAnimation();
 
+        // create descriptive text for the request
+        createRequestAndResponseText(requestType);
+
+        // create and color arrows between view, backend, db
+        const arrowsContainer = document.createElement("div");
+        arrowsContainer.setAttribute("id", "arrows");
+        visuals.appendChild(arrowsContainer);
+
         let shortRequestArrow;
         let longRequestArrow;
-        let longResponseArrow;
-        let shortResponseArrow;
+        let longResponseArrow = createArrow("green", true, "response");
+        let shortResponseArrow = createArrow("green", false, "response");
         switch (requestType) {
             case (RequestMethod.POST):
-                //TODO post text
                 shortRequestArrow = createArrow("green", false, "request");
                 longRequestArrow = createArrow("green", true, "request");
-                longResponseArrow = createArrow("green", true, "response");
-                shortResponseArrow = createArrow("green", false, "response");
+                // longResponseArrow = createArrow("green", true, "response");
+                // shortResponseArrow = createArrow("green", false, "response");
                 break;
             case (RequestMethod.PATCH):
-                //TODO patch text
                 shortRequestArrow = createArrow("yellow", false, "request");
                 longRequestArrow = createArrow("yellow", true, "request");
-                longResponseArrow = createArrow("yellow", true, "response");
-                shortResponseArrow = createArrow("yellow", false, "response");
+                // longResponseArrow = createArrow("yellow", true, "response");
+                // shortResponseArrow = createArrow("yellow", false, "response");
                 break;
             case (RequestMethod.DELETE):
-                //TODO delete text
                 shortRequestArrow = createArrow("red", false, "request");
                 longRequestArrow = createArrow("red", true, "request");
-                longResponseArrow = createArrow("red", true, "response");
-                shortResponseArrow = createArrow("red", false, "response");
+                // longResponseArrow = createArrow("red", true, "response");
+                // shortResponseArrow = createArrow("red", false, "response");
                 break;
             default:
                 console.log("Unknown request type");
         }
 
-        // assign id's for targeted removal
-        shortRequestArrow.setAttribute("id", "a0");
-        longRequestArrow.setAttribute("id", "a1");
-        longResponseArrow.setAttribute("id", "a2");
-        shortResponseArrow.setAttribute("id", "a3");
+        // ---- animations ----
+
+        const arrowsContainerRef = document.getElementById("arrows");
 
         // animates arrow from view to backend
-        visuals.appendChild(shortRequestArrow);
+        arrowsContainerRef.appendChild(shortRequestArrow);
+        document.getElementById("api req text").style.opacity = "100";
+
+
         // animates arrow from backend to db
         setTimeout(() => {
-            visuals.appendChild(longRequestArrow)
+            arrowsContainerRef.appendChild(longRequestArrow)
+            document.getElementById("db req text").style.opacity = "100";
         }, 290);
+
+        // animate db remove or add
+        setTimeout(() => {
+            if (requestType === RequestMethod.POST) {
+                addDbTaskImage();
+            } else if (requestType === RequestMethod.DELETE) {
+                removeDbTaskImage();
+            }
+        }, 450);
+
         // animates response from db to backend
         setTimeout(() => {
-            visuals.appendChild(longResponseArrow)
+            arrowsContainerRef.appendChild(longResponseArrow)
+            document.getElementById("db res text").style.opacity = "100";
         }, 600);
+
         // animates response from backend to view
         setTimeout(() => {
-            visuals.appendChild(shortResponseArrow)
+            arrowsContainerRef.appendChild(shortResponseArrow)
+            document.getElementById("api res text").style.opacity = "100";
         }, 900);
+    }
+
+    function createRequestAndResponseText(requestType) {
+        let ApiRequestText = document.getElementById("api req text");
+        let ApiResponseText = document.getElementById("api res text");
+        let DbRequestText = document.getElementById("db req text");
+        let DbResponseText = document.getElementById("db res text");
+        ApiResponseText.textContent = "OK {tasks}";
+        DbResponseText.textContent = "{tasks}";
+        switch (requestType) {
+            case (RequestMethod.POST):
+                ApiRequestText.textContent = "POST /tasks";
+                DbRequestText.textContent = "insert()";
+                break;
+            case (RequestMethod.PATCH):
+                ApiRequestText.textContent = "PATCH /tasks/{id}";
+                DbRequestText.textContent = "save()";
+                break;
+            case (RequestMethod.DELETE):
+                ApiRequestText.textContent = "DELETE /tasks/{id}";
+                DbRequestText.textContent = "remove()";
+                break;
+            default:
+                console.log("Unknown request type");
+        }
     }
 
     function createArrow(color, isLong, type) {
@@ -317,12 +377,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function deletePreviousAnimation() {
-        // removes any previous arrows
-        for (let i = 0; i < 4; i++) {
-            let arrow = document.getElementById("a" + i);
-            if (arrow != null) {
-                arrow.remove();
-            }
+        const prevArrows = document.getElementById("arrows");
+        if (prevArrows != null) {
+            prevArrows.remove();
+        }
+        let ApiReqText = document.getElementById("api req text");
+        let ApiResText = document.getElementById("api res text");
+        let DbRequestText = document.getElementById("db req text");
+        let DbResponseText = document.getElementById("db res text");
+        ApiReqText.style.opacity = "0";
+        ApiResText.style.opacity = "0";
+        DbRequestText.style.opacity = "0";
+        DbResponseText.style.opacity = "0";
+    }
+
+    function addDbTaskImage() {
+        const taskContainer = document.getElementById("task db container");
+
+        // Create a new image element
+        const newTaskImage = document.createElement("img");
+        newTaskImage.src = "task_db.png";
+        newTaskImage.alt = "db task";
+
+        // Don't display more than four tasks
+        const tasks = taskContainer.getElementsByTagName("img");
+        if (tasks.length > 3) {
+            newTaskImage.style.display = "none";
+        }
+
+        // Append the new image to the container
+        taskContainer.appendChild(newTaskImage);
+    }
+
+    function removeDbTaskImage() {
+        const taskContainer = document.getElementById("task db container");
+        const tasks = taskContainer.getElementsByTagName("img");
+
+        if (tasks.length > 0) {
+            taskContainer.removeChild(tasks[tasks.length - 1]);
         }
     }
 });

@@ -30,7 +30,7 @@ public class TodoController {
    * @param taskRequest task request containing a task description
    * @return updated list of tasks
    */
-  @PostMapping("tasks/add-task")
+  @PostMapping("/tasks")
   public List<Task> addTask(@RequestBody TaskRequest taskRequest) {
     return taskService.createTask(taskRequest.getDescription());
   }
