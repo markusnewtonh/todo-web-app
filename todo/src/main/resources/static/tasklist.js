@@ -1,8 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
     const taskListDiv = document.getElementById("taskList");
     const newTaskForm = document.getElementById("newTaskForm");
+    const visuals = document.getElementById("projectVisual");
 
     const tasksApiEndpoint = "http://localhost:8080/tasks";
+
+    const RequestMethod = {
+        POST: Symbol("POST"),
+        PATCH: Symbol("PATCH"),
+        DELETE: Symbol("DELETE")
+    };
 
     // Fetch tasks and display on page load
     fetchTasks();
@@ -33,6 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 fetchTasks();
             })
             .catch(error => console.error("Error adding new task:", error));
+
+        animateRequest(RequestMethod.POST);
     });
 
     function fetchTasks() {
@@ -122,6 +131,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function removeTask(taskId) {
+        animateRequest(RequestMethod.DELETE);
+
         // Make a DELETE request to remove the task
         fetch(`${tasksApiEndpoint}/${taskId}`, {
             method: "DELETE",
@@ -135,6 +146,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateCompletionStatus(taskId, completed) {
+        animateRequest(RequestMethod.PATCH);
+
         // Make a PATCH request to update the completion status
         fetch(`${tasksApiEndpoint}/completed/${taskId}`, {
             method: "PATCH",
@@ -155,6 +168,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateTaskDescription(taskId, newDescription) {
+        animateRequest(RequestMethod.PATCH);
+
         // Make a PATCH request to update the task description
         fetch(`${tasksApiEndpoint}/${taskId}`, {
             method: "PATCH",
@@ -178,6 +193,136 @@ document.addEventListener("DOMContentLoaded", function () {
             checkboxSpan.textContent = "check_box";
         } else {
             checkboxSpan.textContent = "check_box_outline_blank";
+        }
+    }
+
+    // ------------ functions for visuals / animations ------------
+
+    function animateRequest(requestType) {
+        switch (requestType) {
+            case (RequestMethod.POST):
+                animateRequestArrows(RequestMethod.POST);
+                break;
+            case (RequestMethod.PATCH):
+                animateRequestArrows(RequestMethod.PATCH);
+                break;
+            case (RequestMethod.DELETE):
+                animateRequestArrows(RequestMethod.DELETE);
+                break;
+            default:
+                console.log("Unknown request type");
+        }
+    }
+
+    function animateRequestArrows(requestType) {
+
+        // delete previous arrows
+        deletePreviousAnimation();
+
+        let shortRequestArrow;
+        let longRequestArrow;
+        let longResponseArrow;
+        let shortResponseArrow;
+        switch (requestType) {
+            case (RequestMethod.POST):
+                //TODO post text
+                shortRequestArrow = createArrow("green", false, "request");
+                longRequestArrow = createArrow("green", true, "request");
+                longResponseArrow = createArrow("green", true, "response");
+                shortResponseArrow = createArrow("green", false, "response");
+                break;
+            case (RequestMethod.PATCH):
+                //TODO patch text
+                shortRequestArrow = createArrow("yellow", false, "request");
+                longRequestArrow = createArrow("yellow", true, "request");
+                longResponseArrow = createArrow("yellow", true, "response");
+                shortResponseArrow = createArrow("yellow", false, "response");
+                break;
+            case (RequestMethod.DELETE):
+                //TODO delete text
+                shortRequestArrow = createArrow("red", false, "request");
+                longRequestArrow = createArrow("red", true, "request");
+                longResponseArrow = createArrow("red", true, "response");
+                shortResponseArrow = createArrow("red", false, "response");
+                break;
+            default:
+                console.log("Unknown request type");
+        }
+
+        // assign id's for targeted removal
+        shortRequestArrow.setAttribute("id", "a0");
+        longRequestArrow.setAttribute("id", "a1");
+        longResponseArrow.setAttribute("id", "a2");
+        shortResponseArrow.setAttribute("id", "a3");
+
+        // animates arrow from view to backend
+        visuals.appendChild(shortRequestArrow);
+        // animates arrow from backend to db
+        setTimeout(() => {
+            visuals.appendChild(longRequestArrow)
+        }, 290);
+        // animates response from db to backend
+        setTimeout(() => {
+            visuals.appendChild(longResponseArrow)
+        }, 600);
+        // animates response from backend to view
+        setTimeout(() => {
+            visuals.appendChild(shortResponseArrow)
+        }, 900);
+    }
+
+    function createArrow(color, isLong, type) {
+        const arrowContainer = document.createElement("div");
+        const arrow = document.createElement("object");
+        arrow.type = "image/svg+xml";
+        if (isLong && color === "green" && type === "request") {
+            arrow.data = "long_arrow.svg";
+            arrow.classList.add("longGreenArrow");
+        } else if (isLong && color === "green" && type === "response") {
+            arrow.data = "long_arrow.svg";
+            arrow.classList.add("longGreenArrowResponse");
+        } else if (isLong && color === "red" && type === "request") {
+            arrow.data = "long_arrow.svg";
+            arrow.classList.add("longRedArrow");
+        } else if (isLong && color === "red" && type === "response") {
+            arrow.data = "long_arrow.svg";
+            arrow.classList.add("longRedArrowResponse");
+        } else if (isLong && color === "yellow" && type === "request") {
+            arrow.data = "long_arrow.svg";
+            arrow.classList.add("longYellowArrow");
+        } else if (isLong && color === "yellow" && type === "response") {
+            arrow.data = "long_arrow.svg";
+            arrow.classList.add("longYellowArrowResponse");
+        } else if (!isLong && color === "green" && type === "request") {
+            arrow.data = "arrow.svg";
+            arrow.classList.add("shortGreenArrow");
+        } else if (!isLong && color === "green" && type === "response") {
+            arrow.data = "arrow.svg";
+            arrow.classList.add("shortGreenArrowResponse");
+        } else if (!isLong && color === "yellow" && type === "request") {
+            arrow.data = "arrow.svg";
+            arrow.classList.add("shortYellowArrow");
+        } else if (!isLong && color === "yellow" && type === "response") {
+            arrow.data = "arrow.svg";
+            arrow.classList.add("shortYellowArrowResponse");
+        } else if (!isLong && color === "red" && type === "request") {
+            arrow.data = "arrow.svg";
+            arrow.classList.add("shortRedArrow");
+        } else if (!isLong && color === "red" && type === "response") {
+            arrow.data = "arrow.svg";
+            arrow.classList.add("shortRedArrowResponse");
+        }
+        arrowContainer.appendChild(arrow);
+        return arrowContainer;
+    }
+
+    function deletePreviousAnimation() {
+        // removes any previous arrows
+        for (let i = 0; i < 4; i++) {
+            let arrow = document.getElementById("a" + i);
+            if (arrow != null) {
+                arrow.remove();
+            }
         }
     }
 });
