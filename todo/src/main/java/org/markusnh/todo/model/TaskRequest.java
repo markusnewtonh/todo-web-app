@@ -3,6 +3,10 @@ package org.markusnh.todo.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
+/**
+ * Contains the updated information for a task to be changed. A TaskRequest either carries an
+ * updated task description or updated completion status.
+ */
 public class TaskRequest {
   @NotBlank private String description;
   @NotEmpty private boolean completedStatus;

@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const taskListDiv = document.getElementById("taskList");
     const newTaskForm = document.getElementById("newTaskForm");
     const visuals = document.getElementById("projectVisual");
+    let pageLoaded = false;
 
     const tasksApiEndpoint = "http://localhost:8080/tasks";
 
@@ -12,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Fetch tasks and display on page load
-    fetchTasksInit();
+    fetchTasks();
 
     // Handle form submission to add a new task
     newTaskForm.addEventListener("submit", function (event) {
@@ -44,22 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
         animateRequest(RequestMethod.POST);
     });
 
-    function fetchTasksInit() {
-        // Fetch tasks and display
-        fetch(tasksApiEndpoint)
-            .then(response => response.json())
-            .then(data => {
-                // Clear the taskListDiv before adding new tasks
-                taskListDiv.innerHTML = "";
-
-                data.forEach(task => {
-                    createTaskCheckbox(task);
-                    addDbTaskImage();
-                });
-            })
-            .catch(error => console.error("Error fetching data:", error));
-    }
-
     function fetchTasks() {
         // Fetch tasks and display
         fetch(tasksApiEndpoint)
@@ -69,14 +54,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 taskListDiv.innerHTML = "";
 
                 data.forEach(task => {
-                    createTaskCheckbox(task);
-                });
+                    createTask(task);
+                    if (!pageLoaded) {
+                        // adds task images for each task in the visual overview
+                        addDbTaskImage();
+                    }
+                })
+                pageLoaded = true;
             })
             .catch(error => console.error("Error fetching data:", error));
     }
 
-    function createTaskCheckbox(task) {
+    function createTask(task) {
         // Create a new checkbox div
+        const checkboxDiv = createCheckbox(task);
+
+        // Create a span for the task description
+        const taskDescription = createTaskDescription(task);
+
+        // Create a button for removing the task
+        const removeButton = createRemoveButton(task);
+
+        // Append description and remove button to the checkbox div
+        checkboxDiv.appendChild(taskDescription);
+        checkboxDiv.appendChild(removeButton);
+
+        // Append the checkbox div to the taskList div
+        taskListDiv.appendChild(checkboxDiv);
+    }
+
+    function createCheckbox(task) {
         const checkboxDiv = document.createElement("div");
         checkboxDiv.classList.add("task-checkbox");
 
@@ -89,75 +96,33 @@ document.addEventListener("DOMContentLoaded", function () {
         // Set the checkbox state based on the completion data from the API
         checkbox.checked = task.completed;
 
-        // Custom image for checkbox
+        // Custom icon for checkbox
         // Create a span for the checked state
         const checkedSpan = document.createElement("span");
         checkedSpan.classList.add("material-symbols-outlined");
         checkedSpan.classList.add("material-checkbox");
 
-        // toggle checkbox image if the task is completed
+        // toggle checkbox icon if the task is completed
         toggleCheckboxGraphic(checkedSpan, checkbox);
 
-        // Create a span for the task description
-        const descriptionSpan = document.createElement("span");
-        descriptionSpan.textContent = task.description;
-        descriptionSpan.contentEditable = true;
-        descriptionSpan.required = true;
-
-        // Add an event listener for the blur event (when the element loses focus)
-        descriptionSpan.addEventListener("blur", function () {
-            // Call the updateTaskDescription function when the description is edited
-            if (descriptionSpan.textContent === "") {
-                removeTask(task.id);
-            } else {
-                updateTaskDescription(task.id, descriptionSpan.textContent);
-            }
-        });
-
-        // Create a button for removing the task
-        const removeButton = document.createElement("button");
-
-        // Create the material design icon
-        const removeIcon = document.createElement("span");
-        removeIcon.classList.add("material-symbols-outlined");
-        removeIcon.textContent = "playlist_remove";
-        removeButton.appendChild(removeIcon);
-
-        removeButton.classList.add("removeButton"); // Add the new class for styling
-        removeButton.addEventListener("click", function () {
-            // Call a function to remove the task both in HTML and send a DELETE request
-            removeTask(task.id);
-        });
-
+        // event listener for ticking the checkbox
         checkedSpan.addEventListener("click", function () {
             checkbox.checked = !checkbox.checked;
             updateCompletionStatus(task.id, checkbox.checked);
             toggleCheckboxGraphic(checkedSpan, checkbox)
         });
 
-        // Append checkbox, description, and buttons to the checkbox div
         checkboxDiv.appendChild(checkbox);
         checkboxDiv.appendChild(checkedSpan);
-        checkboxDiv.appendChild(descriptionSpan);
-        checkboxDiv.appendChild(removeButton);
-
-        // Append the checkbox div to the taskList div
-        taskListDiv.appendChild(checkboxDiv);
+        return checkboxDiv;
     }
 
-    function removeTask(taskId) {
-        animateRequest(RequestMethod.DELETE);
-
-        // Make a DELETE request to remove the task
-        fetch(`${tasksApiEndpoint}/${taskId}`, {
-            method: "DELETE",
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Display the updated list of tasks
-                fetchTasks();
-            })
-            .catch(error => console.error(`Error removing task with ID ${taskId}:`, error));
+    function toggleCheckboxGraphic(checkboxSpan, checkboxStatus) {
+        if (checkboxStatus.checked) {
+            checkboxSpan.textContent = "check_box";
+        } else {
+            checkboxSpan.textContent = "check_box_outline_blank";
+        }
     }
 
     function updateCompletionStatus(taskId, completed) {
@@ -182,6 +147,56 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error(`Error updating completion status for task with ID ${taskId}:`, error));
     }
 
+    function createTaskDescription(task) {
+        const descriptionSpan = document.createElement("span");
+        descriptionSpan.textContent = task.description;
+        descriptionSpan.contentEditable = "true";
+        descriptionSpan.required = true;
+
+        // Add an event listener for the blur event (when the element loses focus)
+        descriptionSpan.addEventListener("blur", function () {
+            // Call the updateTaskDescription function when the description is edited
+            if (descriptionSpan.textContent === "") {
+                removeTask(task.id);
+            } else {
+                updateTaskDescription(task.id, descriptionSpan.textContent);
+            }
+        });
+        return descriptionSpan;
+    }
+
+    function createRemoveButton(task) {
+        const removeButton = document.createElement("button");
+
+        // Create the material design icon
+        const removeIcon = document.createElement("span");
+        removeIcon.classList.add("material-symbols-outlined");
+        removeIcon.textContent = "playlist_remove";
+        removeButton.appendChild(removeIcon);
+
+        removeButton.classList.add("removeButton"); // Add the new class for styling
+        removeButton.addEventListener("click", function () {
+            // Call a function to remove the task both in HTML and send a DELETE request
+            removeTask(task.id);
+        });
+        return removeButton;
+    }
+
+    function removeTask(taskId) {
+        animateRequest(RequestMethod.DELETE);
+
+        // Make a DELETE request to remove the task
+        fetch(`${tasksApiEndpoint}/${taskId}`, {
+            method: "DELETE",
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Display the updated list of tasks
+                fetchTasks();
+            })
+            .catch(error => console.error(`Error removing task with ID ${taskId}:`, error));
+    }
+
     function updateTaskDescription(taskId, newDescription) {
         animateRequest(RequestMethod.PATCH);
 
@@ -203,13 +218,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error(`Error updating description for task with ID ${taskId}:`, error));
     }
 
-    function toggleCheckboxGraphic(checkboxSpan, checkboxStatus) {
-        if (checkboxStatus.checked) {
-            checkboxSpan.textContent = "check_box";
-        } else {
-            checkboxSpan.textContent = "check_box_outline_blank";
-        }
-    }
 
     // ------------ functions for visuals / animations ------------
 
@@ -412,7 +420,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function removeDbTaskImage() {
         const taskContainer = document.getElementById("task db container");
         const tasks = taskContainer.getElementsByTagName("img");
-
         if (tasks.length > 0) {
             taskContainer.removeChild(tasks[tasks.length - 1]);
         }

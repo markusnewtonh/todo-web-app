@@ -19,7 +19,7 @@ public class TaskService {
   }
 
   public List<Task> createTask(String taskDescription) {
-    int id = (int) repository.count() + 1;
+    final int id = (int) repository.count() + 1;
     repository.insert(new Task(id, taskDescription, false));
     return repository.findAll();
   }
@@ -32,7 +32,7 @@ public class TaskService {
 
   public List<Task> updateTaskDescription(int id, String newDescription) {
     validateTaskId(id);
-    Task task = repository.findById(id);
+    final Task task = repository.findById(id);
     task.setDescription(newDescription);
     repository.save(task);
     return repository.findAll();
@@ -40,7 +40,7 @@ public class TaskService {
 
   public List<Task> toggleCompletedStatus(int id, boolean newCompletionStatus) {
     validateTaskId(id);
-    Task task = repository.findById(id);
+    final Task task = repository.findById(id);
     task.setCompleted(newCompletionStatus);
     repository.save(task);
     return repository.findAll();

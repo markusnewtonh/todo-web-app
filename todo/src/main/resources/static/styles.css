@@ -340,9 +340,6 @@ body {
 
 .api.req.text {
     position: relative;
-    /*font-family: "Roboto Condensed", sans-serif;*/
-    /*margin-left: auto;*/
-    /*margin-right: auto;*/
     right: 86px;
     top: 137px;
     text-align: center;
@@ -351,9 +348,6 @@ body {
 
 .api.res.text {
     position: relative;
-    /*font-family: "Roboto Condensed", sans-serif;*/
-    /*margin-left: auto;*/
-    /*margin-right: auto;*/
     right: 43px;
     top: 161px;
     text-align: center;
@@ -362,7 +356,6 @@ body {
 
 .db.req.text {
     position: relative;
-    /*font-family: "Roboto Condensed", sans-serif;*/
     margin-left: auto;
     margin-right: auto;
     left: 26px;
@@ -372,7 +365,6 @@ body {
 
 .db.res.text {
     position: relative;
-    /*font-family: "Roboto Condensed", sans-serif;*/
     margin-left: auto;
     margin-right: auto;
     left: 93px;

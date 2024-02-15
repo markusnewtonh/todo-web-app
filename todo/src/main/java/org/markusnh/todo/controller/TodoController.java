@@ -28,7 +28,7 @@ public class TodoController {
    * Adds a task to the task database and returns the updated list of tasks.
    *
    * @param taskRequest task request containing a task description
-   * @return updated list of tasks
+   * @return appended list of tasks
    */
   @PostMapping("/tasks")
   public List<Task> addTask(@RequestBody TaskRequest taskRequest) {
@@ -36,7 +36,7 @@ public class TodoController {
   }
 
   /**
-   * Removes the task with the given id from the list of tasks and database.
+   * Removes the task with the given id from the list of tasks and from database.
    *
    * @param id the task id that should be removed
    * @return updated list of tasks
@@ -53,7 +53,7 @@ public class TodoController {
    * @param taskRequest task request with the new description for the given task
    * @return updated list of tasks
    */
-  @PatchMapping("tasks/{id}")
+  @PatchMapping("/tasks/{id}")
   public List<Task> updateTaskDescription(
       @PathVariable int id, @RequestBody TaskRequest taskRequest) {
     return taskService.updateTaskDescription(id, taskRequest.getDescription());
