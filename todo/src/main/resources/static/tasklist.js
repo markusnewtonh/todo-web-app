@@ -344,40 +344,40 @@ document.addEventListener("DOMContentLoaded", function () {
         const arrow = document.createElement("object");
         arrow.type = "image/svg+xml";
         if (isLong && color === "green" && type === "request") {
-            arrow.data = "long_arrow.svg";
+            arrow.data = "img/long_arrow.svg";
             arrow.classList.add("longGreenArrow");
         } else if (isLong && color === "green" && type === "response") {
-            arrow.data = "long_arrow.svg";
+            arrow.data = "img/long_arrow.svg";
             arrow.classList.add("longGreenArrowResponse");
         } else if (isLong && color === "red" && type === "request") {
-            arrow.data = "long_arrow.svg";
+            arrow.data = "img/long_arrow.svg";
             arrow.classList.add("longRedArrow");
         } else if (isLong && color === "red" && type === "response") {
-            arrow.data = "long_arrow.svg";
+            arrow.data = "img/long_arrow.svg";
             arrow.classList.add("longRedArrowResponse");
         } else if (isLong && color === "yellow" && type === "request") {
-            arrow.data = "long_arrow.svg";
+            arrow.data = "img/long_arrow.svg";
             arrow.classList.add("longYellowArrow");
         } else if (isLong && color === "yellow" && type === "response") {
-            arrow.data = "long_arrow.svg";
+            arrow.data = "img/long_arrow.svg";
             arrow.classList.add("longYellowArrowResponse");
         } else if (!isLong && color === "green" && type === "request") {
-            arrow.data = "arrow.svg";
+            arrow.data = "img/arrow.svg";
             arrow.classList.add("shortGreenArrow");
         } else if (!isLong && color === "green" && type === "response") {
-            arrow.data = "arrow.svg";
+            arrow.data = "img/arrow.svg";
             arrow.classList.add("shortGreenArrowResponse");
         } else if (!isLong && color === "yellow" && type === "request") {
-            arrow.data = "arrow.svg";
+            arrow.data = "img/arrow.svg";
             arrow.classList.add("shortYellowArrow");
         } else if (!isLong && color === "yellow" && type === "response") {
-            arrow.data = "arrow.svg";
+            arrow.data = "img/arrow.svg";
             arrow.classList.add("shortYellowArrowResponse");
         } else if (!isLong && color === "red" && type === "request") {
-            arrow.data = "arrow.svg";
+            arrow.data = "img/arrow.svg";
             arrow.classList.add("shortRedArrow");
         } else if (!isLong && color === "red" && type === "response") {
-            arrow.data = "arrow.svg";
+            arrow.data = "img/arrow.svg";
             arrow.classList.add("shortRedArrowResponse");
         }
         arrowContainer.appendChild(arrow);
@@ -404,7 +404,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Create a new image element
         const newTaskImage = document.createElement("img");
-        newTaskImage.src = "task_db.png";
+        newTaskImage.src = "img/task_db.png";
         newTaskImage.alt = "db task";
 
         // Don't display more than four tasks
