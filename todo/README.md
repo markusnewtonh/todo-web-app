@@ -1,4 +1,4 @@
-### Run using only Docker instructions:
+### Run using only Docker:
 
 Build the docker image:
 
@@ -10,7 +10,7 @@ Create a network for connecting the app and database:
 
 Run MongoDB container:
 
-`docker run --network todo-network --name todo-db mongo`
+`docker run --network todo-network --name mongo-service mongo`
 
 Run Todo app container:
 
@@ -18,3 +18,16 @@ Run Todo app container:
 
 Open a browser and navigate to http://localhost:8080/todo.html.
 
+### Run using Kubernetes (minikube):
+
+Create deployments and services:
+
+`minikube kubectl -- apply -f deployment/mongo.yaml`
+
+`minikube kubectl -- apply -f deployment/todo-app.yaml`
+
+Create a tunnel to access the app through a browser:
+
+`minikube service todo-service --url`
+
+Open a browser and navigate to the url outputted by the previous command appended with `"/todo.html"`.

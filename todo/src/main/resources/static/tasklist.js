@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const visuals = document.getElementById("projectVisual");
     let pageLoaded = false;
 
-    const tasksApiEndpoint = "http://localhost:8080/tasks";
+    const tasksApiEndpoint = "http://" + location.host + "/tasks";
 
     const RequestMethod = {
         POST: Symbol("POST"),
